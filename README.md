@@ -178,10 +178,6 @@ Contributions are welcome! Follow these steps:
 4. Push to the branch (`git push origin feature-branch`).
 5. Open a pull request.
 
-## License
-
-This project is licensed under the MIT License.
-
 ## Acknowledgments
 
 - Special thanks to OpenAI for the GPT-4 API.
