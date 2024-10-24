@@ -1,127 +1,189 @@
 
-# GPT-4 SQL Data Agent
+# SQL Data Agent with GPT-4
 
-This project allows developers to interact with a CSV file using SQL-like queries, where the queries are generated based on natural language input by GPT-4. The application uses Streamlit as the user interface, and `pandasql` is utilized to execute SQL queries on a pandas DataFrame loaded from a CSV file.
+This project provides a way to interact with a PostgreSQL database using SQL queries generated from natural language inputs through GPT-4. It uses **Streamlit** to offer a user-friendly web interface, making it easy for non-technical users to query and manage data without needing SQL expertise.
 
 ## Features
 
-- Accepts natural language input to interact with CSV data.
+- Accepts natural language input to interact with a PostgreSQL database.
 - Translates natural language into SQL queries using GPT-4.
-- Executes SQL queries on a CSV file using `pandasql`.
-- Displays the generated SQL query and the result of the query.
-- Works with an SQLite-like interface but on a DataFrame.
+- Executes generated SQL queries directly on the PostgreSQL database.
+- Displays the generated SQL query and the resulting data on a Streamlit-based interface.
+- Supports easy integration with various data tables and database structures.
 
 ## Project Structure
 
 ```
-GPT-4_SQL_Data_Agent/
+📦 SQL_Data_Agent/
+├── 📄 app.py                       # Main Streamlit application.
 │
-├── app/
-│   └── app.py                    # Main Streamlit application.
+├── 📂 config/
+│   ├── 📄 config.ini               # Configuration file for database URL and OpenAI API key.
+│   └── 📄 config.py                # Reads and parses configuration from config.ini.
 │
-├── config/
-│   ├── config.ini                # Configuration file for API keys and CSV path.
-│   └── config.py                 # Reads configuration from config.ini.
+├── 📂 database/
+│   ├── 📄 db_manager.py            # Manages database connections and executes SQL queries.
+│   ├── 📄 Mock_Patient_Data.csv    # Example CSV file for testing (optional).
 │
-├── database/
-│   └── mock_patient_data.csv      # Mock CSV data file.
-│
-├── gpt_agent.py                  # GPT-4 logic for generating SQL queries.
-├── requirements.txt              # Python dependencies.
-└── README.md                     # Project documentation.
+├── 📄 gpt_agent.py                 # Logic for generating SQL queries using GPT-4.
+├── 📄 test_connection.py           # Script to test database connectivity.
+├── 📄 requirements.txt             # Python dependencies.
+└── 📄 README.md                    # Project documentation.
+
 ```
 
 ## Prerequisites
 
-Before you begin, ensure you have met the following requirements:
-- **Python 3.7+** installed on your machine.
-- An **OpenAI API Key**. You can get one by signing up at [OpenAI](https://beta.openai.com/signup/).
-- **Streamlit** for the web application interface.
-- **pandasql** for running SQL queries on pandas DataFrames.
+Ensure you have the following installed:
+
+- **Python 3.7+**.
+- A **PostgreSQL Database** with user access.
+- An **OpenAI API Key** (sign up at [OpenAI](https://beta.openai.com/signup/)).
+- **Streamlit** for the user interface.
+- **psycopg2** and **SQLAlchemy** for PostgreSQL database connectivity.
 
 ## Setup and Installation
 
-1. Clone the repository to your local machine:
-
-   ```bash
-   git clone https://github.com/RamlavanSukraa/AI_DB_Agent.git
-   cd AI_DB_Agent
-   ```
-
-2. Install the required Python packages:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Set up your OpenAI API key:
-   
-   - Open the `config/config.ini` file and add your OpenAI API key:
-
-     ```
-     [openai]
-     api_key = YOUR_OPENAI_API_KEY
-     ```
-
-4. Verify that the `mock_patient_data.csv` file is in the `database/` directory.
-
-## Running the Application
-
-To start the application, run the following command in the root of the project:
+### Step 1: Clone the Repository
 
 ```bash
-streamlit run app/app.py
+git clone https://github.com/yourusername/SQL_Data_Agent.git
+cd SQL_Data_Agent
 ```
 
-This will start a local web server, and you can access the application by navigating to `http://localhost:8501` in your browser.
+### Step 2: Install Dependencies
 
-## Interacting with the Application
+Install the required Python packages:
 
-Once the application is running:
-1. You can enter natural language requests like:
-   - `"List all patient names"`
-   - `"How many patients are older than 40?"`
-   - `"Show patients who had a Blood Test"`
-   
-2. The application will generate the corresponding SQL query, execute it on the CSV data, and display the result.
+```bash
+pip install -r requirements.txt
+```
 
-### Example Input:
-- **User Input**: `"List all patient names"`
-- **Generated SQL Query**: `SELECT patient_name FROM df;`
-- **Output**: List of patient names from the CSV.
+### Step 3: Configure the Application
+
+Edit `config/config.ini` to include your database connection details and OpenAI API key:
+
+```ini
+[openai]
+api_key = YOUR_OPENAI_API_KEY
+
+[database]
+url = postgresql+psycopg2://username:password@host:port/database_name
+```
+
+- Replace `YOUR_OPENAI_API_KEY` with your OpenAI API key.
+- Adjust `username`, `password`, `host`, `port`, and `database_name` to match your PostgreSQL setup.
+
+### Step 4: Database Setup
+
+1. Ensure that your PostgreSQL server is running.
+2. Create the necessary table structure. Example:
+
+   ```sql
+   CREATE TABLE data_table (
+       column1 VARCHAR(255),
+       column2 INT,
+       column3 TEXT
+   );
+   ```
+
+   Use **psql** or **pgAdmin** to create the table.
+
+### Step 5: Run the Application
+
+Start the Streamlit application:
+
+```bash
+streamlit run app.py
+```
+
+Access the app at `http://localhost:8501`.
+
+## Using the Application
+
+1. Input a natural language query in the provided text box:
+   - Examples:
+     - `"List all entries in column1"`
+     - `"Count records where column2 is greater than 10"`
+     - `"Show all entries containing 'keyword' in column3"`
+2. The app generates a SQL query using GPT-4.
+3. The generated SQL and results are displayed on the web interface.
+
+### Example Query:
+
+- **Input**: `"List all items where column2 is greater than 5"`
+- **Generated SQL Query**: 
+  ```sql
+  SELECT * FROM data_table WHERE column2 > 5;
+  ```
+- **Result**: A table with the relevant data.
 
 ## Project Files Overview
 
-### 1. `app/app.py`
-This is the main application file for Streamlit. It accepts user input, generates the SQL query through GPT-4, and runs the query on the CSV file. The result is displayed back to the user.
+### 1. `app.py`
+Handles the main application logic, including user input, SQL query generation, and displaying results using Streamlit.
 
-### 2. `config/config.py` & `config/config.ini`
-- `config.py` reads the configuration file (`config.ini`), which contains the OpenAI API key and CSV file path.
-- You can adjust the CSV path or other configurations here.
+### 2. `config/config.ini` & `config/config.py`
+- **`config.ini`**: Stores API keys and database connection strings.
+- **`config.py`**: Loads and makes these configurations available to the application.
 
-### 3. `gpt_agent.py`
-This file contains the logic for communicating with the OpenAI GPT-4 model. It sends the user input to GPT-4, which generates a SQL query based on the provided natural language input.
+### 3. `database/db_manager.py`
+Facilitates interactions with the PostgreSQL database:
+- Manages connection setup.
+- Provides functions to execute SQL commands.
 
-### 4. `database/mock_patient_data.csv`
-This is a mock CSV file with patient data. It is used for querying and testing the application.
+### 4. `gpt_agent.py`
+Handles the interaction with GPT-4 to generate SQL queries from user prompts.
 
-### 5. `requirements.txt`
-This file lists all the Python dependencies required to run the project, including:
-- `openai` (for GPT-4 API integration)
-- `streamlit` (for the web interface)
-- `pandasql` (for SQL execution on DataFrames)
-- `pandas` (for handling CSV files)
+### 5. `test_connection.py`
+A utility script to test database connectivity before running the main application.
+
+### 6. `requirements.txt`
+Specifies all dependencies, including:
+
+- `openai` for GPT-4 API access.
+- `sqlalchemy` for database ORM.
+- `psycopg2-binary` for PostgreSQL connectivity.
+- `streamlit` for web-based interactions.
+
+## Troubleshooting
+
+- **Issue**: `relation "data_table" does not exist`
+  - **Solution**: Ensure that the specified table exists in the database.
+
+- **Issue**: `Invalid OpenAI API Key`
+  - **Solution**: Confirm that your API key is correctly configured in `config.ini`.
+
+- **Issue**: `psycopg2.errors.UndefinedTable`
+  - **Solution**: Verify that the table name matches the one used in the generated SQL queries.
 
 ## Customization
 
-### Changing the CSV File:
-To use a different CSV file:
-1. Place your CSV file in the `database/` folder.
-2. Update the `csv_path` in the `config.ini` file to point to your new CSV file.
+### Change Table Structure:
+Adjust `gpt_agent.py` to include new table structures or column names as needed.
 
-### Modifying Queries:
-You can modify the SQL queries generated by GPT-4 by changing the prompt in `gpt_agent.py`. For example, you can include more detailed table structures or provide additional context to GPT-4 for generating specific types of queries.
+### Switch Database:
+Update the `DATABASE_URL` in `config.ini` to connect to a different database.
 
+### Change GPT Model:
+To use a different OpenAI model, update the `MODEL` variable in `gpt_agent.py`.
 
+## Contributing
 
+Contributions are welcome! Follow these steps:
 
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit (`git commit -m 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgments
+
+- Special thanks to OpenAI for the GPT-4 API.
+- Inspired by the need to simplify SQL access for non-technical users.
+- Thanks to the open-source community for making projects like this possible.
