@@ -47,8 +47,8 @@ Ensure you have the following installed:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/SQL_Data_Agent.git
-cd SQL_Data_Agent
+git clone https://github.com/RamlavanSukraa/AI_DB_Agent.git
+cd AI_DB_Agent
 ```
 
 ### Step 2: Install Dependencies
