@@ -9,4 +9,4 @@ config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 # Fetch API Key, Database URL, and CSV Path
 OPENAI_API_KEY = config.get('openai', 'api_key')
 DATABASE_URL = config.get('database', 'url')
-CSV_PATH = config.get('files', 'csv_path')
+# CSV_PATH = config.get('files', 'csv_path')

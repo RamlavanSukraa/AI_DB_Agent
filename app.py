@@ -1,12 +1,11 @@
-# app/app.py
 import streamlit as st
 import pandas as pd
-import pandasql as psql
+from sqlalchemy import create_engine
 from gpt_agent import generate_sql
-from config.config import CSV_PATH
+from config.config import DATABASE_URL
 
-# Load the CSV data into a DataFrame
-df = pd.read_csv(CSV_PATH)
+# Establish a connection to the PostgreSQL database
+engine = create_engine(DATABASE_URL)
 
 # Set up the Streamlit page layout
 st.set_page_config(page_title="GPT-4 SQL Data Agent", layout="wide")
@@ -15,15 +14,15 @@ st.set_page_config(page_title="GPT-4 SQL Data Agent", layout="wide")
 st.sidebar.title("About GPT-4 SQL Data Agent")
 st.sidebar.write("""
 This application uses OpenAI's GPT-4 to generate SQL queries from natural language requests.
-You can interact with a CSV file as if it were a SQL database.
+You can interact with a PostgreSQL database as if it were a SQL database.
 - **Input**: Type your request in plain English.
 - **Output**: The application generates a SQL query and displays the results.
-- **Data Source**: The data is loaded from a CSV file.
+- **Data Source**: The data is loaded from a PostgreSQL database.
 """)
 
 st.sidebar.header("Data Structure")
 st.sidebar.write("""
-The CSV file used in this app contains the following columns:
+The PostgreSQL database used in this app contains the following columns:
 - **lab_name**: The name of the lab where tests were conducted.
 - **patient_name**: Name of the patient.
 - **tests**: The type of tests performed.
@@ -44,8 +43,14 @@ st.write("Interact with your data using natural language!")
 
 # Show a preview of the loaded data
 if st.checkbox("Show data preview"):
-    st.write("Here is a preview of the data:")
-    st.dataframe(df.head())
+    try:
+        with engine.connect() as conn:
+            df = pd.read_sql("SELECT * FROM patient_data LIMIT 5", conn)
+            st.write("Here is a preview of the data:")
+            st.dataframe(df)
+    except Exception as e:
+        st.error("There was an error loading the data preview.")
+        st.error(f"Details: {e}")
 
 # User input for the query
 user_input = st.text_area("Enter your request in natural language:", height=100)
@@ -59,8 +64,9 @@ if st.button("Submit Request"):
         st.markdown(f"**Generated SQL Query:**\n```sql\n{sql_query}\n```")
 
         try:
-            # Use pandasql to run the generated SQL query on the DataFrame
-            result = psql.sqldf(sql_query, {"df": df})
+            # Execute the generated SQL query on the PostgreSQL database
+            with engine.connect() as conn:
+                result = pd.read_sql(sql_query, conn)
             
             # Display the results as a table if there are rows returned
             if not result.empty:
@@ -74,4 +80,3 @@ if st.button("Submit Request"):
             st.error(f"Details: {e}")
     else:
         st.warning("Please enter a request before submitting.")
-

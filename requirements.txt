@@ -1,5 +1,5 @@
 openai
 sqlalchemy
 configparser
-sqlite3  # Only needed if you're using SQLite
 pandasql
+psycopg2-binary

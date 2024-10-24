@@ -1,4 +1,3 @@
-# gpt_agent.py
 import openai
 from config.config import OPENAI_API_KEY
 
@@ -15,7 +14,7 @@ def generate_sql(user_input: str) -> str:
     prompt = f"""
     You are a helpful assistant that generates SQL queries.
     User Input: {user_input}
-    Assume that the table is named 'df' and contains columns: 'lab_name', 'patient_name', 'tests', 'age', 'uhid'.
+    Assume that the table is named 'patient_data' and contains columns: 'lab_name', 'patient_name', 'tests', 'age', 'uhid'.
     Write a SQL query that fulfills the user's request.
     """
     
