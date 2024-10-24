@@ -2,4 +2,8 @@ openai
 sqlalchemy
 configparser
 pandasql
+<<<<<<< HEAD
 psycopg2-binary
+=======
+psycopg2-binary
+>>>>>>> 41451af50c6e53cfdcfbaca1bfbd542e40ada279
